@@ -50,9 +50,9 @@ class Dirus(threading.Thread):
         os.close(tmp_fd)
 
     def run(self):
-
+        # Configure / Run SDR
         # Allow use of 'rx_fm' for Soapy/HackRF
-        rtl_cmd = self.config['rtl'].get('command', 'rtl_fm')
+        rtl_path = self.config['rtl'].get('path', 'rtl_fm')
 
         frequency = "%sM" % self.config['rtl']['frequency']
         sample_rate = self.config['rtl'].get('sample_rate', dirus.SAMPLE_RATE)
@@ -65,7 +65,7 @@ class Dirus(threading.Thread):
         else:
             enable_option = 'none'
 
-        src_cmd = [rtl_cmd]
+        src_cmd = [rtl_path]
         src_cmd.extend(('-f', frequency))
         src_cmd.extend(('-s', sample_rate))
         src_cmd.extend(('-E', enable_option))
@@ -90,30 +90,33 @@ class Dirus(threading.Thread):
 
         self.processes['src'] = src_proc
 
-        direwolf_cmd = self.config['direwolf'].get('path', 'direwolf')
-        direwolf_config_path = self.config['direwolf'].get('config_file')
+        ## Configure / Run Direwolf
+        direwolf_path = self.config['direwolf'].get('command', 'direwolf')                
+        direwolf_conf = self.config['direwolf'].get('conf')
 
+        dw_cmd = [direwolf_path]
         # Configuration file name.
-        if direwolf_config_path is not None:
-            direwolf_cmd.extend(('-c', direwolf_config_path))
+        if direwolf_conf is not None:
+            dw_cmd.extend(('-c', direwolf_conf))
         else:
             self._write_direwolf_conf()
-            direwolf_cmd.extend(('-c', self.direwolf_conf))
+            dw_cmd.extend(('-c', self.direwolf_conf))
+        
         # Text colors.  1=normal, 0=disabled.
-        direwolf_cmd.extend(('-t', 0))
+        dw_cmd.extend(('-t', 0))
         # Number of audio channels, 1 or 2.
-        direwolf_cmd.extend(('-n', 1))
+        dw_cmd.extend(('-n', 1))
         # Bits per audio sample, 8 or 16.
-        direwolf_cmd.extend(('-b', 16))
+        dw_cmd.extend(('-b', 16))
         # Read from STDIN.
-        direwolf_cmd.append('-')
+        dw_cmd.append('-')
 
-        direwolf_cmd = map(str, direwolf_cmd)
+        dw_cmd = map(str, dw_cmd)
 
-        self._logger.debug('direwolf_cmd="%s"', ' '.join(direwolf_cmd))
+        self._logger.debug('dw_cmd="%s"', ' '.join(dw_cmd))
 
         direwolf_proc = subprocess.Popen(
-            direwolf_cmd,
+            dw_cmd,
             stdin=self.processes['src'].stdout,
             stdout=subprocess.PIPE
         )
