@@ -43,13 +43,13 @@ class Dirus(threading.Thread):
         self.stop()
 
     def _write_direwolf_conf(self):
+        
         tmp_fd, self.direwolf_conf = tempfile.mkstemp(
             prefix='dirus_', suffix='.conf')
         os.write(tmp_fd, "ADEVICE null null\n")
         os.close(tmp_fd)
 
     def run(self):
-        self._write_direwolf_conf()
 
         # Allow use of 'rx_fm' for Soapy/HackRF
         rtl_cmd = self.config['rtl'].get('command', 'rtl_fm')
@@ -90,10 +90,15 @@ class Dirus(threading.Thread):
 
         self.processes['src'] = src_proc
 
-        direwolf_cmd = ['direwolf']
+        direwolf_cmd = self.config['direwolf'].get('path', 'direwolf')
+        direwolf_config_path = self.config['direwolf'].get('config_file')
 
         # Configuration file name.
-        direwolf_cmd.extend(('-c', self.direwolf_conf))
+        if direwolf_config_path is not None:
+            direwolf_cmd.extend(('-c', direwolf_config_path))
+        else:
+            self._write_direwolf_conf()
+            direwolf_cmd.extend(('-c', self.direwolf_conf))
         # Text colors.  1=normal, 0=disabled.
         direwolf_cmd.extend(('-t', 0))
         # Number of audio channels, 1 or 2.

@@ -6,5 +6,9 @@
         "offset_tuning": false,
         "device_index": 0,
         "sample_rate": 44100
+    },
+    "direwolf": {
+        "path": "/usr/local/bin/direwolf",
+        "config_file": "/etc/direwolf/direwolf.conf"
     }
 }
