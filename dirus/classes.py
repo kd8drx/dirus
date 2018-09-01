@@ -108,7 +108,7 @@ class Dirus(threading.Thread):
         # Number of audio channels, 1 or 2.
         dw_cmd.extend(('-n', 1))
         # Resample rate coming from rtl_fm. Synced with settings from rtl_fm.
-        dw_cmd.extend(('-s', sample_rate))
+        dw_cmd.extend(('-r', sample_rate))
         # Bits per audio sample, 8 or 16.
         dw_cmd.extend(('-b', 16))
         # Read from STDIN.
