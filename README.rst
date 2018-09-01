@@ -28,6 +28,20 @@ Plus:
 
 That's it! Install one FM Decoder, Dire Wolf, and Dirus and you're off to the races!
 
+Configuration
+=====
+A sample dirus.json file is included in the repository, showing the options you can
+configure across the two applications. Most defaults will work out-of-the-box, but
+you may need to update a few:
+
+**path**: Defines the full path to rtl_fm or rx_fm, and direwolf.
+**frequency**: Update to ensure the SDR listens on the right APRS frequency for your region.
+**ppm**: Adjusts for natural errors in most RTL chipsets. Run `rtl_test -p` for at least 10 minutes to determine the error rate for your particular unit.
+**gain** _(Optional)_: Set the manual gain for your RTL in dB, or leave at 0 to set to automatic (recommended)
+**device_index**: Allows you to run dirus with multiple SDR units attached. Use `rtl_test` to identify devices available and their index.
+**sample_rate**: Determines the audio sample rate (in Hz) used between rtl_fm and direwolf. The default of 44100 is sufficient for 1200 baud AFSK.
+**conf**: Point to the configuration file for Direwolf, or leave blank to use a very simple, basic config that depends on Direwolf's defaults.
+
 Usage
 =====
 
@@ -67,9 +81,19 @@ Source
 ======
 Github: https://github.com/ampledata/dirus
 
+Building from Source
+======
+A simple `make` file is included in the source. To build, you only need the basic `python2.7-dev` and `libpython2.7-dev` packages installed.
+
+As implied, Dirus uses Python 2, not Python 3.
+
 Author
 ======
 Greg Albrecht W2GMD <oss@undef.net>
+
+Contributors
+======
+Will Davidson KD8DRX <will@kilodelta.com>
 
 Copyright
 =========
